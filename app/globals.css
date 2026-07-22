@@ -1,0 +1,309 @@
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-xs: 26rem;
+
+  /* Official claude.ai dark-mode tokens (bg-100 canvas, bg-000 raised, ivory borders at low alpha) */
+  --color-bg: #262624;
+  --color-bg-deep: #1f1e1d;
+  --color-bg-raised: #30302e;
+  --color-surface: #30302e;
+  --color-surface-hover: #3d3d3a;
+  --color-border: #3a3a37;
+  --color-border-light: #4b4a47;
+  --color-ivory: #faf9f5;
+  --color-secondary: #c2c0b6;
+  --color-muted: #aaa89f;
+  --color-faint: #99978f;
+  --color-coral: #d97757;
+  --color-coral-bright: #e08b6d;
+  /* Separate action shades keep white button labels at WCAG AA contrast without dulling coral accents. */
+  --color-coral-action: #b65435;
+  --color-coral-action-hover: #a84a2d;
+  --color-coral-pressed: #963d23;
+  --color-amber: #d9a557;
+  --color-danger: #dd5353;
+  --color-track: #3d3d3a;
+}
+
+/* Font tokens reference next/font variables, so they must be inlined into utilities. */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-lora), ui-serif, Georgia, serif;
+}
+
+/* Per-provider accent tokens. Default is Claude's coral; a [data-provider] scope (each account card,
+   and the Connect dialog's chosen provider) overrides them so provider-specific surfaces re-skin
+   without per-element conditionals. Functional severity colors (amber/danger) stay provider-neutral. */
+:root {
+  --accent: var(--color-coral);
+  --accent-bright: var(--color-coral-bright);
+  --accent-strong: var(--color-coral-action);
+  --accent-strong-hover: var(--color-coral-action-hover);
+  --accent-contrast: #ffffff;
+  --accent-soft: rgba(217, 119, 87, 0.16);
+  --avatar-bg: rgba(217, 119, 87, 0.16);
+  --avatar-fg: var(--color-coral-bright);
+  --avatar-border: transparent;
+}
+
+/* Explicit Claude scope. Needed so a Claude surface nested inside another provider's scope (e.g. the
+   Connect dialog's Claude tab on an all-ChatGPT page, or a Claude card in a mixed dashboard) resets to
+   coral instead of inheriting the ancestor's tokens. Mirrors the :root defaults. */
+[data-provider="anthropic"] {
+  --accent: var(--color-coral);
+  --accent-bright: var(--color-coral-bright);
+  --accent-strong: var(--color-coral-action);
+  --accent-strong-hover: var(--color-coral-action-hover);
+  --accent-contrast: #ffffff;
+  --accent-soft: rgba(217, 119, 87, 0.16);
+  --avatar-bg: rgba(217, 119, 87, 0.16);
+  --avatar-fg: var(--color-coral-bright);
+  --avatar-border: transparent;
+}
+
+/* ChatGPT / OpenAI — a monochrome, near-black identity on the dark canvas. */
+[data-provider="openai"] {
+  --accent: #ececec;
+  --accent-bright: #ffffff;
+  --accent-strong: #ffffff;
+  --accent-strong-hover: #e4e4e4;
+  --accent-contrast: #0d0d0d;
+  --accent-soft: rgba(255, 255, 255, 0.1);
+  --avatar-bg: #0d0d0d;
+  --avatar-fg: #ffffff;
+  --avatar-border: rgba(255, 255, 255, 0.16);
+}
+
+/* A brand-accent primary button that follows the nearest [data-provider] scope. */
+.accent-btn {
+  background-color: var(--accent-strong);
+  color: var(--accent-contrast);
+}
+
+.accent-btn:hover:not(:disabled) {
+  background-color: var(--accent-strong-hover);
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ivory);
+  background-image: radial-gradient(
+    ellipse 90% 60% at 50% -10%,
+    color-mix(in srgb, var(--accent) 7%, transparent),
+    transparent
+  );
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* Route the coral brand utilities through the per-provider accent tokens. Outside any [data-provider]
+   scope the tokens equal coral, so every existing surface is byte-identical; only a scope that flips
+   to another provider (a ChatGPT card, or an all-ChatGPT page) re-skins. This is what lets buttons,
+   toggles, and accents across the app follow the provider without per-element edits. */
+.text-coral {
+  color: var(--accent);
+}
+.text-coral-bright {
+  color: var(--accent-bright);
+}
+.bg-coral {
+  background-color: var(--accent);
+}
+.border-coral {
+  border-color: var(--accent);
+}
+
+/* Interactive white-on-accent surfaces use the stronger AA shade + a matching readable text color. */
+.bg-coral.text-white {
+  background-color: var(--accent-strong);
+  color: var(--accent-contrast);
+}
+
+button.bg-coral.text-white:hover:not(:disabled),
+a.bg-coral.text-white:hover {
+  background-color: var(--accent-strong-hover);
+}
+
+button.bg-coral.text-white:active:not(:disabled),
+a.bg-coral.text-white:active {
+  background-color: var(--accent-strong-hover);
+}
+
+:where(button, a[href]) {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition-duration: 160ms;
+  transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+:where(button:not(:disabled), a[href]):active {
+  filter: brightness(0.92);
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Some component inputs deliberately remove the browser outline; restore a consistent keyboard ring globally. */
+html :where(a[href], button, input, textarea, select, [role="button"], [role="switch"]):focus-visible {
+  outline: 2px solid var(--accent-bright) !important;
+  outline-offset: 3px !important;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 1rem;
+  z-index: 70;
+  transform: translateY(-150%);
+  border-radius: 0.625rem;
+  background: var(--color-ivory);
+  color: var(--color-bg-deep);
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  transition: transform 160ms cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease both;
+}
+
+.animate-modal-in {
+  animation: modal-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-spin-slow {
+  animation: spin 0.9s linear infinite;
+}
+
+.skeleton {
+  background: linear-gradient(
+    100deg,
+    var(--color-track) 40%,
+    var(--color-surface-hover) 50%,
+    var(--color-track) 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+/* claude.ai's official ease-out curve */
+.bar-fill {
+  transition: width 0.9s cubic-bezier(0.165, 0.84, 0.44, 1), background-color 0.45s ease;
+}
+
+.card-lift {
+  transition:
+    transform 0.2s cubic-bezier(0.165, 0.84, 0.44, 1),
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+@media (hover: hover) {
+  .card-lift:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-border-light);
+    box-shadow: 0 16px 38px -18px rgba(0, 0, 0, 0.62);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .animate-rise,
+  .animate-fade-in,
+  .animate-modal-in,
+  .animate-spin-slow,
+  .skeleton {
+    animation: none;
+  }
+  .bar-fill,
+  .card-lift {
+    transition: none;
+  }
+
+  .card-lift:hover,
+  :where(button:not(:disabled), a[href]):active {
+    filter: none;
+    transform: none;
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "name": "how-much-ai",
+  "version": "0.1.0",
+  "description": "Self-hosted Claude and ChatGPT/Codex subscription usage dashboard",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SeraphKc/how-much-ai.git"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "bin": {
+    "how-much-ai": "bin/connect.mjs"
+  },
+  "files": [
+    "bin/connect.mjs",
+    "lib/credential-source.mjs",
+    "lib/connect-url.mjs"
+  ],
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build && node scripts/assert-no-vault-traces.mjs",
+    "start": "next start",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"lib/**/*.test.ts\"",
+    "typecheck": "next typegen && tsc --noEmit",
+    "check": "npm test && npm run typecheck && npm run build"
+  },
+  "dependencies": {
+    "convex": "^1.42.1",
+    "next": "^16.2.11",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.2",
+    "@types/node": "^26.1.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@types/web-push": "^3.6.4",
+    "tailwindcss": "^4.3.2",
+    "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.22",
+      "sharp": "0.35.3"
+    }
+  }
+}

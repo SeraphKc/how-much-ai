@@ -1,0 +1,43 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# vercel
+.vercel
+
+# local AI-agent state
+/.claude/
+
+# misc
+.DS_Store
+*.pem
+*.tsbuildinfo
+
+# env — never commit secrets
+.env
+.env.*
+.playwright-mcp/
+.env*
+
+# local vault storage
+/.data
+**/vault*.enc*
+**/vault.key
+**/token-recovery/
+!.env.example
+
+# generated spreadsheet inspection and preview artifacts
+/outputs/*/*.inspect.ndjson
+/outputs/*/preview-*.png
+/outputs/*/node_modules
+
+# one-off quality-audit migration helpers (the JSON inventories + XLSX are canonical)
+/quality/update_baseline.mjs
+/quality/update_final.mjs
+
+# convex codegen (regenerated on deploy)
+convex/_generated
