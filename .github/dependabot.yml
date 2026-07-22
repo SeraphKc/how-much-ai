@@ -4,10 +4,12 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    # Keep the public repository single-branch; security updates remain enabled
+    # in GitHub's repository settings.
+    open-pull-requests-limit: 0
 
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
