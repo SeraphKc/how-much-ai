@@ -208,7 +208,7 @@ test("authorization code is never retried or sent to a fallback after 5xx or tra
     const response = await POST(request());
     assert.equal(response.status, 502);
     assert.equal(calls.filter((call) => call.url.endsWith("/v1/oauth/token")).length, 1);
-    assert.equal(calls.some((call) => call.url.includes("console.anthropic.com")), false);
+    assert.equal(calls.some((call) => new URL(call.url).hostname === "console.anthropic.com"), false);
     assert.deepEqual(await loadAccounts("default"), []);
   }
 });
